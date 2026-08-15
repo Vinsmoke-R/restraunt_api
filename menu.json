@@ -1,0 +1,34 @@
+{
+    "indian_foods": {
+        "butter_chicken": 250,
+        "biryani": 300,
+        "dal_makhani": 180,
+        "paneer_tikka": 220,
+        "rogan_josh": 280,
+        "chole_bhature": 150
+    },
+    "south_indian_foods": {
+        "dosa": 120,
+        "idli": 80,
+        "sambar": 100,
+        "uttapam": 140,
+        "vada": 70,
+        "appam": 110
+    },
+    "snacks": {
+        "samosa": 40,
+        "pakora": 60,
+        "spring_rolls": 80,
+        "chaat": 100,
+        "bhujiya": 50,
+        "kachori": 45
+    },
+    "drinks": {
+        "lassi": 80,
+        "mango_shake": 120,
+        "iced_tea": 90,
+        "masala_chai": 50,
+        "lemonade": 60,
+        "soft_drink": 40
+    }
+}
