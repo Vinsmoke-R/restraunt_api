@@ -22,10 +22,12 @@ def save_data(data):
 
 #load orders 
 def load_orders():
+    # if there is no such file it will return {}
     if not os.path.exists('orders.json'):
         return {}
     with open('orders.json','r') as f:
         content = f.read().strip()
+        # if file exist but is empty so it was showing error so we return {}
         if not content:
             return {}
         return json.loads(content)
@@ -37,17 +39,22 @@ def find_item(menu, item_name):
             return items[item_name], category
     return None, None
 
+# get menu
+@app.get('/menu')
+def get_menu():
+    return load_data()
+
 # order 
 @app.post('/{table_id}/order')
 def order(table_id: int, restraunt: Restraunt):
     # load menu
-    data = load_data()
+    menu = load_data()
 
     # select order
     selected_items = []
     total = 0 
     for item_name, qty in restraunt.order.items():
-        price, category = find_item(data, item_name)
+        price, category = find_item(menu, item_name)
         if price is None:
             raise HTTPException(status_code = 404,detail=f"Item {item_name} not found in menu")
         subtotal = price*qty
@@ -69,13 +76,43 @@ def order(table_id: int, restraunt: Restraunt):
         "status": "placed"
     }
     save_data(all_orders)
+    return {"message": "Order placed", "order": all_orders[str(table_id)]}
 
 #order add 
-@app.put('/{table_id}/edit/order')
-def add_order(table_id:int):
-    pass
+@app.put('/{table_id}/edit')
+def add_order(table_id:int, restraunt:Restraunt):
+    all_orders = load_orders()
+    order = all_orders.get(str(table_id))
+    if not order:
+        raise HTTPException(status_code=404, detail="No order for this table")
+    
+    menu = load_data()
 
-#chef getting orders
+    # select order
+    selected_items = []
+    total = 0 
+    for item_name, qty in restraunt.order.items():
+        price, category = find_item(menu, item_name)
+        if price is None:
+            raise HTTPException(status_code = 404,detail=f"Item {item_name} not found in menu")
+        subtotal = price*qty
+        total += subtotal
+        selected_items.append({
+            "Name":item_name,
+            "Price":price,
+            "Category":category,
+            "Quantity":qty,
+            "Total":subtotal,
+        })
+
+    order["items"].extend(selected_items)
+    order["total"] += total
+    all_orders[str(table_id)] = order
+
+    save_data(all_orders) 
+    return {"message": "Order updated", "order": order}
+
+# chef getting orders
 @app.get('/get/{table_id}')
 def get_orders(table_id:int):
     pass
