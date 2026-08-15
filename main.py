@@ -25,7 +25,10 @@ def load_orders():
     if not os.path.exists('orders.json'):
         return {}
     with open('orders.json','r') as f:
-        return json.load(f)
+        content = f.read().strip()
+        if not content:
+            return {}
+        return json.loads(content)
 
 # helper: find an item's price by searching all categories
 def find_item(menu, item_name):
